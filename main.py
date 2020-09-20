@@ -14,7 +14,7 @@ api = Api(app)
 
 @app.route('/', methods=['GET'])
 def home():
-    return "<h1>Unofficial Worldometers.info API</h1><p>This site is a prototype API for get data from Worldometers.info</p>"
+    return "<h1>Unofficial Worldometers.info API</h1><p>This site is a API for get data from Worldometers.info</p>"
 
 # CORONAVIRUS SECTION
 @app.route('/api/coronavirus/all/', methods=['GET'])
