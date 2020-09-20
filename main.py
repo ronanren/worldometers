@@ -21,8 +21,8 @@ def home():
 def api_all():
 
     data = []
-    key = ["place", "Total Cases", "New Cases", "Total Deaths", "New Deaths", "Total Recovered",
-           "New Recovered", "Active Cases", "Critical", "test", "test1", "test2", "test3", "test4", "test5", "test6"]
+    key = ['place', "Country", "Total Cases", "New Cases", "Total Deaths", "New Deaths", "Total Recovered",
+           "New Recovered", "Active Cases", "Critical", "Total Cases/1M pop", "Deaths/1M pop", "Total Tests", "Tests/1M pop", "Population", "Region"]
     req = urllib.request.Request('https://www.worldometers.info/coronavirus/',
                                  headers={'User-Agent': 'Mozilla/5.0'})
     source = urllib.request.urlopen(req).read()
@@ -32,8 +32,9 @@ def api_all():
     i = 0
     for tr in table_rows:
         if i > 6:
-            data.append(re.split('\n', tr.text[1:])[:-2])
+            data.append(dict(zip(key, re.split('\n', tr.text[1:])[:-2])))
         i += 1
+
     return jsonify(data)
 
 
