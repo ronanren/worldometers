@@ -84,6 +84,3 @@ def api_population():
     res = dict()
     res['data'] = data
     return res
-
-
-app.run(debug=True)
