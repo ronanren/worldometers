@@ -6,10 +6,21 @@ from flask import jsonify
 from bs4 import BeautifulSoup
 import urllib.request
 import re
+import json
+import ast
+from cachetools import cached, TTLCache
+from apscheduler.schedulers.background import BackgroundScheduler
+from app.scraping import fetch_data_coronavirus
 
 
 app = Flask(__name__)
 api = Api(app)
+cache = TTLCache(maxsize=1024, ttl=120)
+
+
+sched = BackgroundScheduler()
+sched.add_job(fetch_data_coronavirus, 'interval', minutes=1, max_instances=2)
+sched.start()
 
 
 @app.route('/', methods=['GET'])
@@ -17,51 +28,36 @@ def home():
     return "<h1>Unofficial Worldometers.info API</h1><p>This site is a API for get data from Worldometers.info</p>"
 
 # CORONAVIRUS SECTION
+@cached(cache)
+def get_data_coronavirus():
+    f = open('app/coronavirus.json', "r")
+    data = f.read()
+    data = ast.literal_eval(data)
+    f.close()
+
+    return data
+
+
 @app.route('/api/coronavirus/all/', methods=['GET'])
-def api_all():
-
-    data = []
-    key = ['place', "Country", "Total Cases", "New Cases", "Total Deaths", "New Deaths", "Total Recovered",
-           "New Recovered", "Active Cases", "Critical", "Total Cases/1M pop", "Deaths/1M pop", "Total Tests", "Tests/1M pop", "Population", "Region"]
-    req = urllib.request.Request('https://www.worldometers.info/coronavirus/',
-                                 headers={'User-Agent': 'Mozilla/5.0'})
-    source = urllib.request.urlopen(req).read()
-    soup = BeautifulSoup(source, 'html.parser')
-    tables = soup.find_all('tbody')
-    table_rows = tables[0].find_all('tr')
-    i = 0
-    for tr in table_rows:
-        if i > 6:
-            data.append(dict(zip(key, re.split('\n', tr.text[1:])[:-2])))
-        i += 1
-
-    res = dict()
-    res['data'] = data
+def api_coronavirus_all():
+    res = get_data_coronavirus()
     return res
 
 
 @app.route('/api/coronavirus/country/<country>', methods=['GET'])
-def api_country(country):
-
-    data = []
-    key = ['place', "Country", "Total Cases", "New Cases", "Total Deaths", "New Deaths", "Total Recovered",
-           "New Recovered", "Active Cases", "Critical", "Total Cases/1M pop", "Deaths/1M pop", "Total Tests", "Tests/1M pop", "Population", "Region"]
-    req = urllib.request.Request('https://www.worldometers.info/coronavirus/',
-                                 headers={'User-Agent': 'Mozilla/5.0'})
-    source = urllib.request.urlopen(req).read()
-    soup = BeautifulSoup(source, 'html.parser')
-    tables = soup.find_all('tbody')
-    table_rows = tables[0].find_all('tr')
-    i = 0
-    for tr in table_rows:
-        if i > 6:
-            if (dict(zip(key, re.split('\n', tr.text[1:])[:-2]))['Country'].lower() == country.lower()):
-                data.append(dict(zip(key, re.split('\n', tr.text[1:])[:-2])))
-        i += 1
-
-    res = dict()
-    res['data'] = data
-    return res
+def api_coronavirus_country(country):
+    res = get_data_coronavirus()
+    i = 1
+    found = False
+    while (not found and i < len(res['data'])):
+        if (res['data'][i]['Country'].lower() == country.lower()):
+            found = True
+        else:
+            i += 1
+    if (found):
+        return res['data'][i]
+    else:
+        return {"Error": "Country not found !"}
 
 
 # POPULATION SECTION

@@ -6,3 +6,5 @@ lxml==4.5.2
 requests==2.22.0
 urllib3==1.25.6
 gunicorn==19.9.0
+APScheduler==3.6.3
+cachetools==4.1.1
