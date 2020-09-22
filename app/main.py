@@ -1,10 +1,10 @@
 from flask import Flask
 from flask_restful import Api
 from flask import request, jsonify
+from flask import jsonify
 
 from bs4 import BeautifulSoup
 import urllib.request
-from flask import jsonify
 import re
 
 
