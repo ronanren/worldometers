@@ -18,13 +18,14 @@ def fetch_data_coronavirus():
     i = 0
     for tr in table_rows:
         if i > 6:
-            data.append(dict(zip(key, re.split('\n', tr.text[1:])[:-2])))
+            data.append(
+                dict(zip(key, re.split('\n', tr.text[1:].replace(" ", ""))[:-2])))
         i += 1
 
     res = dict()
     res['data'] = data
 
     dataJson = json.dumps(res)
-    f = open("app/coronavirus.json", "w")
+    f = open("app/data/coronavirus.json", "w")
     f.write(dataJson)
     f.close()

@@ -15,7 +15,7 @@ from app.scraping import fetch_data_coronavirus
 
 app = Flask(__name__)
 api = Api(app)
-cache = TTLCache(maxsize=1024, ttl=120)
+cache = TTLCache(maxsize=1024, ttl=60)
 
 
 sched = BackgroundScheduler()
@@ -30,11 +30,10 @@ def home():
 # CORONAVIRUS SECTION
 @cached(cache)
 def get_data_coronavirus():
-    f = open('app/coronavirus.json', "r")
+    f = open('app/data/coronavirus.json', "r")
     data = f.read()
     data = ast.literal_eval(data)
     f.close()
-
     return data
 
 
