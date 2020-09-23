@@ -3,6 +3,7 @@ import urllib.request
 import re
 import json
 import ast
+from datetime import datetime
 
 
 def fetch_data_coronavirus():
@@ -24,6 +25,7 @@ def fetch_data_coronavirus():
 
     res = dict()
     res['data'] = data
+    res['last_update'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
     dataJson = json.dumps(res)
     f = open("app/data/coronavirus.json", "w")
