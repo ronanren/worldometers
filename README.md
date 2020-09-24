@@ -12,7 +12,7 @@
   <a href="#Features">Features</a> |
   <a href="#Usage">Usage</a> |
   <a href="#License">License</a> |
-  <a href="#Contactez-moi">contact me</a> | 
+  <a href="#Contact">Contact</a> | 
   <a href="https://ronanren.github.io" target="_blank">My Portfolio</a> 
 </p>
 
@@ -20,6 +20,7 @@
 
 - 🔁 Data update every minute
 - 🌎 Get information on every country in the world
+- ⌛ API fast with < 200ms
 - ☕️ Simple data and simple to use
 
 # Usage
@@ -158,6 +159,6 @@ Get all data in real time about coronavirus from one country from worldometers
 
 <a href="https://github.com/ronanren/Covid19bot/blob/master/LICENSE" target="_blank">MIT</a>
 
-# Contactez-moi
+# Contact
 
 **Twitter** : <a href="https://twitter.com/Ronanren" target="_blank">@Ronanren</a>
