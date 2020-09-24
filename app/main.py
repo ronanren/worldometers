@@ -8,6 +8,7 @@ import urllib.request
 import re
 import json
 import ast
+from datetime import datetime
 from cachetools import cached, TTLCache
 from apscheduler.schedulers.background import BackgroundScheduler
 from app.scraping import fetch_data_coronavirus
@@ -45,6 +46,7 @@ def api_coronavirus_all():
 
 @app.route('/api/coronavirus/country/<country>', methods=['GET'])
 def api_coronavirus_country(country):
+    result = {}
     res = get_data_coronavirus()
     i = 1
     found = False
@@ -54,6 +56,17 @@ def api_coronavirus_country(country):
         else:
             i += 1
     if (found):
-        return res['data'][i]
+        result['data'] = res['data'][i]
+        result['last_update'] = res['last_update']
+        return result
     else:
         return {"Error": "Country not found !"}
+
+
+@app.route('/api/coronavirus/world/', methods=['GET'])
+def api_coronavirus_world():
+    res = {}
+    data = get_data_coronavirus()
+    res['data'] = data['data'][0]
+    res['last_update'] = data['last_update']
+    return res
