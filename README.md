@@ -11,6 +11,7 @@
 <p align="center">
   <a href="#Features">Features</a> |
   <a href="#Usage">Usage</a> |
+  <a href="#Installation">Installation</a> |
   <a href="#License">License</a> |
   <a href="#Contact">Contact</a> | 
   <a href="https://ronanren.github.io" target="_blank">My Portfolio</a> 
@@ -154,6 +155,13 @@ Get all data in real time about coronavirus from one country from worldometers
 ```
 
 </details>
+
+# Installation
+
+```sh
+pip install -r requirements.txt
+python run.py
+```
 
 # License
 
