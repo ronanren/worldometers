@@ -22,7 +22,7 @@ cacheGlobal = TTLCache(maxsize=1024, ttl=30)
 
 sched = BackgroundScheduler()
 sched.add_job(fetch_data_coronavirus, 'interval', minutes=1, max_instances=2)
-sched.add_job(fetch_data_global, 'interval', minutes=1, max_instances=2)
+sched.add_job(fetch_data_global, 'interval', minutes=0.1, max_instances=2)
 sched.start()
 
 

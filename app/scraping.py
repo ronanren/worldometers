@@ -7,13 +7,15 @@ import json
 import ast
 from datetime import datetime
 
-HEADERS={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36'}
+HEADERS = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36'}
 GLOBAL_URL = "https://www.worldometers.info/"
+
 
 def save_to_json_file(data, filename):
     res = dict()
     res['data'] = data
-    res['last_update'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    res['last_update'] = datetime.now().strftime('%Y-%m-%d %H:%M:%SUTC')
 
     dataJson = json.dumps(res)
     f = open("app/data/" + filename + ".json", "w")
@@ -22,11 +24,13 @@ def save_to_json_file(data, filename):
 
 # CORONAVIRUS SCRAPING
 
+
 def fetch_data_coronavirus():
     data = []
     key = ['place', "Country", "Total Cases", "New Cases", "Total Deaths", "New Deaths", "Total Recovered",
            "New Recovered", "Active Cases", "Critical", "Total Cases/1M pop", "Deaths/1M pop", "Total Tests", "Tests/1M pop", "Population", "Region"]
-    req = urllib.request.Request('https://www.worldometers.info/coronavirus/', headers=HEADERS)
+    req = urllib.request.Request(
+        'https://www.worldometers.info/coronavirus/', headers=HEADERS)
     source = urllib.request.urlopen(req).read()
     soup = bs4.BeautifulSoup(source, 'html.parser')
     tables = soup.find_all('tbody')
@@ -54,7 +58,6 @@ async def fetch_data_global():
 
     await response.html.arender()
 
-
     # Data processing
     data = dict()
     last_row = ""
@@ -68,8 +71,8 @@ async def fetch_data_global():
                 data[row.text] = dict()
                 last_row = row.text
             elif row['class'][0] == 'counter-group' and row.find('span', 'counter-item') != None:
-                data[last_row][row.find('span', 'counter-item').text] = row.find('span', 'rts-counter').text
-
+                data[last_row][row.find(
+                    'span', 'counter-item').text] = row.find('span', 'rts-counter').text
 
     save_to_json_file(data, "global")
     await asession.close()
