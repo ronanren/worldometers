@@ -8,4 +8,4 @@ urllib3==1.25.6
 gunicorn==19.9.0
 APScheduler==3.6.3
 cachetools==4.1.1
-requests-html==0.10.0
+selenium==3.141.0

@@ -242,9 +242,25 @@ $ cd worldometers
 # Install all dependencies
 $ pip install -r requirements.txt
 
+# Install ChromeWebDriver
+brew cask install chromedriver # MacOS with Brew 🍺
+choco install chromedriver # Windows with Chocolatey
+
 # Start web server
 $ python run.py
 ```
+
+If you intend to deploy this project on Heroku, here are some additional commands :
+
+```bash
+heroku buildpacks:add --index 1 https://github.com/heroku-buildpack-chromedriver
+heroku buildpacks:add --index 2 https://github.com/heroku-buildpack-chromedriver
+
+heroku config:set GOOGLE_CHROME_BIN=/app/.apt/usr/bin/google_chrome
+heroku config:set CHROMEDRIVER_PATH=/app/.chromedriver/bin/chromedrive
+```
+
+and in `constants.py`, change `DEPLOY` to `prod`.
 
 # License
 

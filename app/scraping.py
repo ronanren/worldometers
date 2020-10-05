@@ -1,16 +1,13 @@
 import bs4
 import urllib.request
-from requests_html import AsyncHTMLSession
 import time
 import re
 import json
 import ast
+import os
 from datetime import datetime
-
-HEADERS = {
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36'}
-GLOBAL_URL = "https://www.worldometers.info/"
-
+from selenium import webdriver
+from app.constants import HEADERS, GLOBAL_URL, CORONAVIRUS_URL, GOOGLE_CHROME_PATH, CHROMEDRIVER_PATH, DEPLOY
 
 def save_to_json_file(data, filename):
     res = dict()
@@ -29,8 +26,7 @@ def fetch_data_coronavirus():
     data = []
     key = ['place', "Country", "Total Cases", "New Cases", "Total Deaths", "New Deaths", "Total Recovered",
            "New Recovered", "Active Cases", "Critical", "Total Cases/1M pop", "Deaths/1M pop", "Total Tests", "Tests/1M pop", "Population", "Region"]
-    req = urllib.request.Request(
-        'https://www.worldometers.info/coronavirus/', headers=HEADERS)
+    req = urllib.request.Request(CORONAVIRUS_URL, headers=HEADERS)
     source = urllib.request.urlopen(req).read()
     soup = bs4.BeautifulSoup(source, 'html.parser')
     tables = soup.find_all('tbody')
@@ -47,22 +43,27 @@ def fetch_data_coronavirus():
 
 # GLOBAL SCRAPING
 
-async def fetch_data_global():
+def fetch_data_global():
     # Getting the web page
-    asession = AsyncHTMLSession()
-    response = await asession.get(GLOBAL_URL, headers=HEADERS)
+    chrome_options = webdriver.ChromeOptions()
+    chrome_options.add_argument('--disable-gpu')
+    chrome_options.add_argument('--no-sandbox')
 
-    if response.status_code != 200:
-        print("An error occured when getting the page")
-        return
+    if DEPLOY == 'dev':
+        driver = webdriver.Chrome(chrome_options=chrome_options)
+    else:
+        chrome_options.binary_location = GOOGLE_CHROME_PATH
+        driver = webdriver.Chrome(executable_path=CHROMEDRIVER_PATH, chrome_options=chrome_options)
 
-    await response.html.arender()
+    driver.implicitly_wait(30)
+    driver.get(GLOBAL_URL)
+    driver.implicitly_wait(30)
 
     # Data processing
     data = dict()
     last_row = ""
 
-    soup = bs4.BeautifulSoup(response.html.html, 'html.parser')
+    soup = bs4.BeautifulSoup(driver.page_source, 'html.parser')
     rows = soup.find('div', 'counterdiv').children
 
     for row in rows:
@@ -75,4 +76,5 @@ async def fetch_data_global():
                     'span', 'counter-item').text] = row.find('span', 'rts-counter').text
 
     save_to_json_file(data, "global")
-    await asession.close()
+
+    driver.close()
