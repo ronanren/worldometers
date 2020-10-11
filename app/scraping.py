@@ -1,6 +1,5 @@
 import bs4
 import urllib.request
-from requests_html import AsyncHTMLSession
 import time
 import re
 import json
@@ -43,36 +42,3 @@ def fetch_data_coronavirus():
         i += 1
 
     save_to_json_file(data, "coronavirus")
-
-
-# GLOBAL SCRAPING
-
-async def fetch_data_global():
-    # Getting the web page
-    asession = AsyncHTMLSession()
-    response = await asession.get(GLOBAL_URL, headers=HEADERS)
-
-    if response.status_code != 200:
-        print("An error occured when getting the page")
-        return
-
-    await response.html.arender()
-
-    # Data processing
-    data = dict()
-    last_row = ""
-
-    soup = bs4.BeautifulSoup(response.html.html, 'html.parser')
-    rows = soup.find('div', 'counterdiv').children
-
-    for row in rows:
-        if isinstance(row, bs4.element.Tag):
-            if row['class'][0] == 'counter-title' or row['class'][0] == 'counter-title-top':
-                data[row.text] = dict()
-                last_row = row.text
-            elif row['class'][0] == 'counter-group' and row.find('span', 'counter-item') != None:
-                data[last_row][row.find(
-                    'span', 'counter-item').text] = row.find('span', 'rts-counter').text
-
-    save_to_json_file(data, "global")
-    await asession.close()
