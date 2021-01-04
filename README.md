@@ -23,6 +23,7 @@
 - 🌎 Get information on every country in the world
 - ⌛ API fast with < 200ms
 - ☕️ Simple data and simple to use
+- 🔗 Available on <a href="https://rapidapi.com/ronanren/api/worldometers">RapidAPI</a>
 
 # Usage
 
